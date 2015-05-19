@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import functools
 
 import newrelic.agent
+import newrelic.config
 
 from lymph.core import trace
 from lymph.core.plugins import Plugin
@@ -24,7 +25,11 @@ class NewrelicPlugin(Plugin):
         self.container = container
         self.container.error_hook.install(self.on_error)
         self.container.http_request_hook.install(self.on_http_request)
+
         newrelic.agent.initialize(config_file, environment)
+        newrelic.config._settings.app_name = '%s;%s' % (container.service_name, newrelic.config._settings.app_name)
+        newrelic.config._process_app_name_setting()
+
         for method in ('send_request', 'emit_event', 'lookup'):
             setattr(ServiceContainer, method, newrelic.agent.function_trace()(getattr(ServiceContainer, method)))
 
