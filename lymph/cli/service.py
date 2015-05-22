@@ -8,6 +8,11 @@ import gevent
 from setproctitle import setproctitle
 import six
 
+try:
+    import prctl
+except ImportError:
+    prctl = None
+
 from lymph.utils import import_object, dump_stacks
 from lymph.autoreload import set_source_change_callback
 from lymph.cli.base import Command
@@ -55,6 +60,9 @@ class InstanceCommand(Command):
 
     def run(self):
         debug = self.args.get('--debug')
+
+        if prctl and os.environ.get('LYMPH_NODE'):
+            prctl.set_pdeathsig(signal.SIGKILL)
 
         self._setup_container(debug)
 
