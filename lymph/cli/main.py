@@ -69,6 +69,7 @@ def main(argv=None):
     from lymph.cli.help import HELP
     from lymph.cli.base import get_command_class
     from lymph.utils import logging as lymph_logging
+    from lymph.exceptions import CliError
 
     args = docopt.docopt(HELP, argv, version=VERSION, options_first=True)
     name = args.pop('<command>')
@@ -95,7 +96,11 @@ def main(argv=None):
 
     terminal = setup_terminal(args, config)
     command = command_cls(args, config, terminal)
-    return command.run()
+    try:
+        return command.run()
+    except CliError as e:
+        print(e)
+        sys.exit(1)
 
 
 if __name__ == '__main__':

@@ -66,5 +66,9 @@ class ResourceExhausted(Exception):
     pass
 
 
-class ConfigurationError(Exception):
+class CliError(Exception):
+    pass
+
+
+class ConfigurationError(CliError):
     pass

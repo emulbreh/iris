@@ -43,7 +43,11 @@ class ConfigObject(collections.Mapping):
         return value
 
     def create_instance(self, key, default_class=None, **kwargs):
-        instance_config = self.get(key, {})
+        if default_class:
+            instance_config = self.get(key, {})
+        else:
+            instance_config = self.require(key)
+
         return self._create_instance(key, instance_config, default_class=default_class, **kwargs)
 
     def _create_instance(self, key, instance_config, default_class=None, **kwargs):
@@ -69,7 +73,7 @@ class ConfigObject(collections.Mapping):
             return cls(**instance_config)
 
     def get_instance(self, key, default_class=None, **kwargs):
-        instance_data = self.get(key)
+        instance_data = self.require(key)
         if isinstance(instance_data, six.string_types) and instance_data.startswith('dep:'):
             _, dep_name = instance_data.split(':', 1)
             return self.get_dependency(dep_name, **kwargs)
@@ -101,6 +105,9 @@ class ConfigView(ConfigObject):
 
     def set(self, key, value):
         return self.root.set('%s.%s' % (self.path, key), value)
+
+    def require(self, key):
+        return self.root.require('%s.%s' % (self.path, key))
 
     def __iter__(self):
         return iter(self.root.get_raw(self.path))
@@ -206,6 +213,12 @@ class Configuration(ConfigObject):
             return default
         if isinstance(value, dict) and not self.raw:
             value = ConfigView(self, key)
+        return value
+
+    def require(self, key):
+        value = self.get(key)
+        if not value:
+            raise ConfigurationError('%r configuration is required' % key)
         return value
 
     def __str__(self):
