@@ -141,7 +141,7 @@ class ZmqRPCServer(Component):
             headers.update(extra_headers)
         else:
             headers = extra_headers
-        headers.setdefault('trace_id', trace.get_id())
+        headers.update(trace.get_headers())
         return headers
 
     def _pick_instance(self, service):
@@ -212,7 +212,8 @@ class ZmqRPCServer(Component):
         return logging.DEBUG if msg.subject == 'lymph.ping' else logging.INFO
 
     def recv_message(self, msg):
-        trace.set_id(msg.headers.get('trace_id'))
+        trace.from_headers(msg.headers)
+
         logger.debug('<- %s', msg)
         connection = self.connect(msg.source)
         connection.on_recv(msg)

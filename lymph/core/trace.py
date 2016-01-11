@@ -32,14 +32,27 @@ def trace(**kwargs):
 
 def set_id(trace_id=None):
     tid = trace_id or uuid.uuid4().hex
-    trace(lymph_trace_id=tid)
+    trace(trace_id=tid)
     if trace_id is None:
         logger.debug('starting trace')
     return tid
 
 
 def get_id():
-    return get_trace().get('lymph_trace_id')
+    return get_trace().get('trace_id')
+
+
+def from_headers(headers):
+    trace(**headers.get('trace', {}))
+    if 'trace_id' in headers:  # for backwards compatibility with lymph<=0.14
+        set_id(headers['trace_id'])
+
+
+def get_headers():
+    return {
+        'trace': get_trace(),
+        'trace_id': get_id(),  # for backwards compatibility with lymph<=0.14
+    }
 
 
 class TraceFormatter(logging.Formatter):

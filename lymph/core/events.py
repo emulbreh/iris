@@ -76,7 +76,7 @@ class EventHandler(Component):
             self.interface.container.subscribe(self, consume=self.active)
 
     def __call__(self, event, *args, **kwargs):
-        trace.set_id(event.headers.get('trace_id'))
+        trace.from_headers(event.headers)
         logger.debug('<E %s', event)
         return self.func(self.interface, event, *args, **kwargs)
 

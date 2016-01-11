@@ -251,7 +251,7 @@ class ServiceContainer(Componentized):
 
     def emit_event(self, event_type, payload, headers=None, **kwargs):
         headers = headers or {}
-        headers.setdefault('trace_id', trace.get_id())
+        headers.update(trace.get_headers())
         event = Event(event_type, payload, source=self.identity, headers=headers)
         self.events.emit(event, **kwargs)
 
@@ -287,6 +287,7 @@ class ServiceContainer(Componentized):
                     'interface': interface_name,
                     'func_name': func_name,
                     'trace_id': trace.get_id(),
+                    'trace': trace.get_trace(),
                 })
             finally:
                 del exc_info
