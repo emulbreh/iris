@@ -1,12 +1,16 @@
+import contextlib
 import logging
 import uuid
 
 import gevent
 
 from lymph.utils.gpool import NonBlockingPool
+from lymph.core.plugins import Hook
 
 
 logger = logging.getLogger(__name__)
+enter_trace_hook = Hook()
+exit_trace_hook = Hook()
 
 
 def get_trace(greenlet=None):
@@ -42,10 +46,16 @@ def get_id():
     return get_trace().get('trace_id')
 
 
+@contextlib.contextmanager
 def from_headers(headers):
     trace(**headers.get('trace', {}))
     if 'trace_id' in headers:  # for backwards compatibility with lymph<=0.14
         set_id(headers['trace_id'])
+    trace_id = get_id()
+    enter_trace_hook(trace_id)
+    yield
+    get_trace().clear()
+    exit_trace_hook(trace_id)
 
 
 def get_headers():

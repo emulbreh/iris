@@ -212,8 +212,6 @@ class ZmqRPCServer(Component):
         return logging.DEBUG if msg.subject == 'lymph.ping' else logging.INFO
 
     def recv_message(self, msg):
-        trace.from_headers(msg.headers)
-
         logger.debug('<- %s', msg)
         connection = self.connect(msg.source)
         connection.on_recv(msg)
@@ -238,7 +236,8 @@ class ZmqRPCServer(Component):
                 msg_id = frames[1] if len(frames) >= 2 else None
                 logger.warning('bad message format %s: %r (msg-id=%s)', e, (frames), msg_id)
                 continue
-            self.recv_message(msg)
+            with trace.from_headers(msg.headers):
+                self.recv_message(msg)
 
     def ping(self, address):
         return self.send_request(address, 'lymph.ping', {'payload': ''})
