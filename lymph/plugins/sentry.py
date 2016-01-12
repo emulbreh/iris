@@ -4,10 +4,10 @@ from lymph.core.plugins import Plugin
 
 
 class SentryPlugin(Plugin):
-    def __init__(self, container, dsn=None, **kwargs):
+    def __init__(self, container, config=None, **kwargs):
         super(SentryPlugin, self).__init__()
         self.container = container
-        self.client = Client(dsn)
+        self.client = Client(config.get('dsn'))
         self.container.error_hook.install(self.on_error)
 
     def on_error(self, exc_info, **kwargs):

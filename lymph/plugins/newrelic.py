@@ -32,14 +32,16 @@ def trace_rpc_method(method, get_subject):
 
 
 class NewrelicPlugin(Plugin):
-    def __init__(self, container, config_file=None, environment=None, app_name=None, **kwargs):
+    def __init__(self, container, config=None, **kwargs):
         super(NewrelicPlugin, self).__init__()
+
         self.container = container
         self.container.error_hook.install(self.on_error)
         self.container.http_request_hook.install(self.on_http_request)
-        newrelic.agent.initialize(config_file, environment)
+        newrelic.agent.initialize(config.get('config_file'), config.get('environment'))
 
         settings = newrelic.agent.global_settings()
+        app_name = config.get('app_name')
         if app_name:
             settings.app_name = app_name
             # `app_name` requires post-processing which is only triggered by

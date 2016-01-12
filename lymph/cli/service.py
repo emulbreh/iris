@@ -27,7 +27,7 @@ SIGNAL_NAMES = {getattr(signal, name): name for name in dir(signal) if name.star
 def install_plugins(container, plugins):
     for name, plugin_config in six.iteritems(plugins):
         cls = import_object(plugin_config['class'])
-        container.install_plugin(cls, **plugin_config)
+        container.install_plugin(cls, config=plugin_config)
 
 
 def install_interfaces(container, interfaces):
