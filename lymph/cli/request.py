@@ -120,8 +120,8 @@ class RequestCommand(Command):
         client = Client.from_config(self.config)
 
         def request():
-            trace.set_id(self.args.get('--trace-id'))
-            return client.request(address, subject, body, timeout=timeout, version=version)
+            with trace.context(self.args.get('--trace-id')):
+                return client.request(address, subject, body, timeout=timeout, version=version)
 
         N, C = int(self.args['-N']), int(self.args['-C'])
 

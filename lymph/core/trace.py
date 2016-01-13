@@ -1,6 +1,7 @@
 import contextlib
 import logging
 import uuid
+import warnings
 
 import gevent
 
@@ -35,11 +36,10 @@ def trace(**kwargs):
 
 
 def set_id(trace_id=None):
-    tid = trace_id or uuid.uuid4().hex
-    trace(trace_id=tid)
-    if trace_id is None:
-        logger.debug('starting trace')
-    return tid
+    warnings.warn('trace:set_id() is deprecated, please use trace:context() instead.', DeprecationWarning)
+    trace_id = trace_id or uuid.uuid4().hex
+    trace(trace_id=trace_id)
+    return trace_id
 
 
 def get_id():
@@ -47,15 +47,22 @@ def get_id():
 
 
 @contextlib.contextmanager
-def from_headers(headers):
-    trace(**headers.get('trace', {}))
-    if 'trace_id' in headers:  # for backwards compatibility with lymph<=0.14
-        set_id(headers['trace_id'])
-    trace_id = get_id()
+def context(trace_id=None):
+    trace_id = trace_id or uuid.uuid4().hex
+    trace(trace_id=trace_id)
     enter_trace_hook(trace_id)
     yield
     get_trace().clear()
     exit_trace_hook(trace_id)
+
+
+@contextlib.contextmanager
+def from_headers(headers):
+    trace(**headers.get('trace', {}))
+    if 'trace_id' in headers:  # for backwards compatibility with lymph<=0.14
+        trace(trace_id=headers['trace_id'])
+    with context(get_id()):
+        yield
 
 
 def get_headers():

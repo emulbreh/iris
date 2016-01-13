@@ -27,10 +27,10 @@ class Client(lymph.Interface):
         i = 0
         while True:
             gevent.sleep(self.delay)
-            trace.set_id()
-            try:
-                result = self.echo.upper(text='foo_%s' % i)
-            except lymph.RpcError:
-                continue
-            print("result = %s" % result)
+            with trace.context():
+                try:
+                    result = self.echo.upper(text='foo_%s' % i)
+                except lymph.RpcError:
+                    continue
+                print("result = %s" % result)
             i += 1

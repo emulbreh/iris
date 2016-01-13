@@ -98,22 +98,22 @@ class WebServiceInterface(Interface):
         super(WebServiceInterface, self).on_stop()
 
     def dispatch_request(self, request):
-        trace.set_id()
-        logger.info('%s %s', request.method, request.path)
-        urls = self.url_map.bind_to_environ(request.environ)
-        request.urls = urls
-        try:
-            rule, kwargs = request.urls.match(method=request.method, return_rule=True)
-        except NotFound:
-            response = self.NotFound().get_response(request.environ)
-        except MethodNotAllowed:
-            response = self.MethodNotAllowed().get_response(request.environ)
-        except HTTPException as ex:
-            response = ex.get_response(request.environ)
-        else:
-            response = self.handle(request, rule, kwargs)
-        response.headers['X-Trace-Id'] = trace.get_id()
-        return response
+        with trace.context():
+            logger.info('%s %s', request.method, request.path)
+            urls = self.url_map.bind_to_environ(request.environ)
+            request.urls = urls
+            try:
+                rule, kwargs = request.urls.match(method=request.method, return_rule=True)
+            except NotFound:
+                response = self.NotFound().get_response(request.environ)
+            except MethodNotAllowed:
+                response = self.MethodNotAllowed().get_response(request.environ)
+            except HTTPException as ex:
+                response = ex.get_response(request.environ)
+            else:
+                response = self.handle(request, rule, kwargs)
+            response.headers['X-Trace-Id'] = trace.get_id()
+            return response
 
     def handle(self, request, rule, kwargs):
         try:
