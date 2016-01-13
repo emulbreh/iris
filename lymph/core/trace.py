@@ -10,8 +10,11 @@ from lymph.core.plugins import Hook
 
 
 logger = logging.getLogger(__name__)
+
 enter_trace_hook = Hook()
 exit_trace_hook = Hook()
+
+logged_trace_vars = ('trace_id',)
 
 
 def get_trace(greenlet=None):
@@ -74,5 +77,7 @@ def get_headers():
 
 class TraceFormatter(logging.Formatter):
     def format(self, record):
-        record.trace_id = get_id()
+        record.trace_id = get_id()  # for backwards compatibility with lymph<=0.14
+        t = get_trace()
+        record.traceparams = ' '.join('%s="%s"' % (key, t.get(key)) for key in logged_trace_vars)
         return super(TraceFormatter, self).format(record)
