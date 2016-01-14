@@ -24,6 +24,9 @@ script:
     - pushd tmp
     - nosetests --with-lymph lymph
     - popd
+    - pushd docs
+    - make SPHINXOPTS=-Wn html
+    - popd
 
 notifications:
     email: false
