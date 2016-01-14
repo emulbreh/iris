@@ -12,6 +12,7 @@ The way events are communicated is pluggable and can be easily exchanged at will
 The unittests for instance are using a local event system ``LocalEventSystem`` to
 not rely on `RabbitMQ`_.
 
+
 Other event brokers
 ~~~~~~~~~~~~~~~~~~~
 
@@ -89,7 +90,7 @@ The ``lymph.Interface`` provides a method for emitting events.
     :noindex:
 
     :param event_type: name of the event
-    :param payload: a dict of :ref:`serializable <serialization>` data structures
+    :param payload: a dict of :doc:`serializable </topic_guides/serialization>` data structures
 
 
 A simple example of a class emitting a signal with a simple event would be:

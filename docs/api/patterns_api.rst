@@ -18,4 +18,4 @@ Pattern API
     These queues are then partitioned over all service instances and consumed sequentially, 
     i.e. at most one event per queue at a time.
     
-    .. image:: /../_static/serial_event.svg
+    .. image:: /_static/serial_event.svg

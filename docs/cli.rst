@@ -36,6 +36,8 @@ lymph list
 Prints a list of all available commands with their description.
 
 
+.. _cli-lymph-instance:
+
 lymph instance
 ----------------
 
@@ -71,6 +73,8 @@ lymph subscribe
 
 Subscribes to an event type and prints every occurence.
 
+
+.. _cli-lymph-node:
 
 lymph node
 ------------

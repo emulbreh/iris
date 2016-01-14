@@ -14,3 +14,4 @@ Topic guides
     http
     serialization
     versioning
+    tasks
