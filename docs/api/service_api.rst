@@ -1,5 +1,6 @@
 .. currentmodule:: lymph
 
+
 Service API
 ===========
 
@@ -93,7 +94,7 @@ Service API
 .. decorator:: raw_rpc()
 
     Marks the decorated interface method as an RPC method. Using this decorator
-    the RPC function are expected to accept a :class:`ReplyChannel` instance
+    the RPC function are expected to accept a :class:`lymph.core.channels.ReplyChannel` instance
     as a first argument.
 
     .. code::

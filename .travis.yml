@@ -25,7 +25,7 @@ script:
     - nosetests --with-lymph lymph
     - popd
     - pushd docs
-    - make SPHINXOPTS=-Wn html
+    - make SPHINXOPTS=-W html
     - popd
 
 notifications:

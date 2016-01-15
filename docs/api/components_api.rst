@@ -8,7 +8,7 @@ Components are objects that depend on a running service container. They are
 embedded in :class:`Componentized` objects.
 Since Componentized objects themselves are components, they form a tree of
 :class:`Component` instances with the container as the root. An example
-of a Component is :class:`lymph.core.interfaces.Interface`.
+of a Component is :class:`lymph.Interface`.
 
 
 .. class:: Component(error_hook=None, pool=None, metrics=None)

@@ -112,19 +112,16 @@ Core API
 
     .. attribute:: endpoint
 
-        The rpc endpoint for this
+        The rpc endpoint of this service instance
 
 
 .. currentmodule:: lymph.core.connections
 
 .. class:: Connection
 
-    You can attain a connection to an lymph service instance directly from :meth:`lymph.core.container.ServiceContainer.connect`, or
-    from the higher-level API in :mod:`lymph.core.services`.
-    For ZeroMQ endpoint addresses the following to statements are roughly equivalent::
-
-        container.connect(address)  # only works for tcp://… addresses
-        container.lookup(address).connect()  # will also work for service names
+    .. attribute:: endpoint
+    
+        The rpc endpoint this connection is to.
 
 
 .. currentmodule:: lymph.core.interfaces
