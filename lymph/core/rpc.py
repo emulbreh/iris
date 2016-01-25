@@ -21,6 +21,10 @@ from lymph.exceptions import NotConnected
 logger = logging.getLogger(__name__)
 
 
+def compose(f, g):
+    return lambda instances: f(g(instances))
+
+
 class ZmqRPCServer(Component):
     def __init__(self, ip='127.0.0.1', port=None, pool=None, connection_config=None):
         super(ZmqRPCServer, self).__init__(pool=pool)
@@ -36,6 +40,7 @@ class ZmqRPCServer(Component):
         self.running = False
         self.request_handler = lambda channel: None
         self.connection_config = connection_config or {}
+        self.router = lambda instances: instances
 
         self.recv_sock = None
         self.send_sock = None
@@ -52,6 +57,9 @@ class ZmqRPCServer(Component):
             pool=pool,
             connection_config=config.get_raw('connection', {}),
         )
+
+    def route(self, router):
+        self.router = compose(router, self.router)
 
     def _bind(self, max_retries=2, retry_delay=0):
         assert not self.bound, 'already bound (endpoint=%s)' % self.endpoint
@@ -147,7 +155,7 @@ class ZmqRPCServer(Component):
     def _pick_instance(self, service):
         service.observe(services.REMOVED, self._on_service_instance_unavailable)
         choices = []
-        for instance in service:
+        for instance in self.router(service):
             try:
                 connection = self.connections[instance.endpoint]
             except KeyError:

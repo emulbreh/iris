@@ -24,6 +24,14 @@ class ServiceInstance(object):
         self.info = {}
         self.update(**info)
 
+    def __repr__(self):
+        return '<%s id=%s name=%s version=%s>' % (
+            self.__class__.__name__,
+            self.id,
+            self.info.get('name'),
+            self.version,
+        )
+
     def update(self, **info):
         version = info.pop('version', None)
         if version:
@@ -93,7 +101,7 @@ class Service(InstanceSet):
         try:
             instance = self.instances[instance_id]
         except KeyError:
-            instance = self.instances[instance_id] = ServiceInstance(**info)
+            instance = self.instances[instance_id] = ServiceInstance(name=self.name, **info)
             self.notify_observers(ADDED, instance)
         else:
             instance.update(**info)
