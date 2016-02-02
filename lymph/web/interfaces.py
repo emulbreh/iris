@@ -10,6 +10,7 @@ from werkzeug.routing import Rule
 from lymph.core.interfaces import Interface
 from lymph.core.services import ServiceInstance
 from lymph.core import trace
+from lymph.core.versioning import serialize_version
 from lymph.utils.logging import setup_logger
 from lymph.exceptions import SocketNotCreated, NoSharedSockets
 from lymph.utils import sockets
@@ -86,6 +87,7 @@ class WebServiceInterface(Interface):
 
         web_instance = ServiceInstance(
             id=self.id,
+            version=serialize_version(self.version),
             identity=self.container.identity,
             hostname=socket.gethostname(),
             ip=self.container.server.ip,
